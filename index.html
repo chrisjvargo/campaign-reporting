@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign Reporting — Subaru on The Trade Desk, 2018 | APRD 3002</title>
+<style>
+  :root{
+    --ink:#141414; --paper:#ffffff; --blue:#1246a0; --amber:#f5b301;
+    --grey:#5a5a5a; --line:#d9d9d9; --soft:#f2f2f0; --red:#b3271e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--paper); overflow:hidden;
+  }
+  .deck{position:relative;height:100vh;width:100vw}
+  .slide{
+    position:absolute; inset:0; display:none; flex-direction:column;
+    padding:4.5vh 6vw 7vh 6vw; overflow-y:auto;
+  }
+  .slide.active{display:flex}
+  .kicker{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--blue); margin-bottom:14px;
+  }
+  h1{font-family:Georgia,"Times New Roman",serif; font-weight:700; font-size:clamp(34px,4.6vw,58px); line-height:1.05; letter-spacing:-.01em}
+  h2{font-family:Georgia,"Times New Roman",serif; font-weight:700; font-size:clamp(28px,3.6vw,44px); line-height:1.1; margin-bottom:18px}
+  h3{font-size:19px; font-weight:700; margin-bottom:8px}
+  p,li{font-size:clamp(16px,1.55vw,21px); line-height:1.45}
+  p{margin-bottom:14px}
+  ul{margin:0 0 14px 22px}
+  li{margin-bottom:8px}
+  .lead{font-size:clamp(19px,2vw,26px); line-height:1.4; max-width:52ch}
+  .small{font-size:14px; color:var(--grey); line-height:1.5}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .rule{border:none;border-top:3px solid var(--ink); margin:18px 0 22px 0; width:100%}
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:4vw; align-items:start}
+  .cols3{display:grid; grid-template-columns:repeat(3,1fr); gap:2.5vw; align-items:start}
+  @media(max-width:900px){.cols,.cols3{grid-template-columns:1fr}}
+  .statgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:18px; margin:20px 0}
+  .stat{border-top:3px solid var(--ink); padding-top:10px}
+  .stat .n{font-family:Georgia,serif; font-size:clamp(30px,3.4vw,46px); font-weight:700; line-height:1}
+  .stat .l{font-size:13.5px; color:var(--grey); margin-top:6px; line-height:1.4}
+  .stat.blue{border-top-color:var(--blue)} .stat.blue .n{color:var(--blue)}
+  .stat.amber{border-top-color:var(--amber)}
+  table{width:100%; border-collapse:collapse; font-size:15.5px; margin:12px 0}
+  th{font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+     text-align:right; padding:8px 10px; border-bottom:2.5px solid var(--ink); color:var(--ink)}
+  th:first-child{text-align:left}
+  td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums}
+  td:first-child{text-align:left; font-weight:600}
+  tr.hl td{background:#eef3fb; font-weight:700}
+  .box{background:var(--soft); padding:18px 20px; margin:14px 0}
+  .box.warn{background:#fdf3e7; border-left:5px solid var(--amber)}
+  .box.stop{background:#fbeeec; border-left:5px solid var(--red)}
+  .box .t{font-weight:700; margin-bottom:6px}
+  .box p:last-child{margin-bottom:0}
+  .wall{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin:16px 0}
+  .wall figure{border:1px solid var(--line); background:#fff}
+  .wall img{width:100%; height:150px; object-fit:cover; display:block}
+  .wall figcaption{font-size:12px; color:var(--grey); padding:7px 9px; font-family:ui-monospace,Menlo,monospace}
+  .card{border:1.5px solid var(--ink); padding:16px 18px; margin-bottom:14px; background:#fff}
+  .card .hd{display:flex; justify-content:space-between; gap:12px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--grey); margin-bottom:8px}
+  .card .ttl{font-weight:700; font-size:17px; margin-bottom:5px}
+  .card .bdy{font-size:15.5px; line-height:1.45}
+  .card .lnk{font-size:13px; color:var(--blue); margin-top:7px; font-family:ui-monospace,Menlo,monospace}
+  svg.chart{width:100%; height:auto; display:block; margin:10px 0}
+  .chartnote{font-size:13.5px; color:var(--grey); margin-top:4px}
+  .hud{
+    position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-between; align-items:center;
+    padding:10px 20px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--grey);
+    background:linear-gradient(to top, rgba(255,255,255,.96), rgba(255,255,255,0)); z-index:50; pointer-events:none;
+  }
+  .hud button{pointer-events:auto; font:inherit; background:#fff; border:1.5px solid var(--ink); color:var(--ink);
+    padding:5px 12px; cursor:pointer; margin-left:8px}
+  .hud button:hover{background:var(--ink); color:#fff}
+  #bar{position:fixed; top:0; left:0; height:4px; background:var(--amber); z-index:60; width:0%}
+  .notes{display:none; margin-top:22px; border-top:2px dashed var(--blue); padding-top:14px}
+  body.shownotes .notes{display:block}
+  .notes .t{font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--blue); margin-bottom:8px}
+  .notes p,.notes li{font-size:15px}
+  .bigq{font-family:Georgia,serif; font-size:clamp(24px,3vw,38px); line-height:1.25; font-style:italic; max-width:26ch}
+  .tag{display:inline-block; font-family:ui-monospace,Menlo,monospace; font-size:11.5px; letter-spacing:.08em;
+       border:1.5px solid var(--ink); padding:3px 8px; margin-right:6px; text-transform:uppercase}
+  .tag.b{border-color:var(--blue); color:var(--blue)} .tag.r{border-color:var(--red); color:var(--red)}
+  .flow{display:flex; flex-wrap:wrap; gap:10px; align-items:stretch; margin:16px 0}
+  .flow .step{flex:1 1 150px; border:1.5px solid var(--ink); padding:12px 14px}
+  .flow .step .s{font-family:ui-monospace,Menlo,monospace; font-size:11.5px; color:var(--blue); letter-spacing:.1em; text-transform:uppercase}
+  .flow .step .v{font-weight:700; font-size:16.5px; margin-top:4px}
+  .flow .arr{align-self:center; font-size:22px; font-weight:700}
+  @media print{
+    body{overflow:visible} .deck{height:auto}
+    .slide{display:flex !important; position:static; page-break-after:always; overflow:visible; min-height:95vh}
+    .hud,#bar{display:none} .notes{display:block}
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide">
+  <div class="kicker">APRD 3002 · Communication &amp; Media Planning</div>
+  <h1>Campaign Reporting:<br>one year of Subaru<br>on The Trade Desk</h1>
+  <hr class="rule">
+  <p class="lead">A full calendar year of real programmatic delivery: <strong>1.48 billion impressions, $4.64 million, 1.12 million clicks</strong> across 47 Subaru campaigns, January–December 2018.</p>
+  <p>You already did the Excel mechanics on a slice of this workbook. Today is the grown-up version: turn a raw DSP export into a client report you'd defend in a room — scorecard, pacing, efficiency, caveats, and one decision.</p>
+  <p class="small">Source workbook: `subaru.xlsx` (The Trade Desk export, 8 tabs). All figures in this deck are recomputed from row-level sums, weighted properly, with rollup rows removed. GTC is reported exactly as the workbook labels it — a recorded conversion signal, never "sales."</p>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Position: Social and Meta taught platform-native buying; this class teaches reporting on open-web programmatic where the export is messy and totals fight each other. Link back to Peter Brinkman's guest chat: this is the kind of delivery a trading desk produces, now students report it.</p>
+  </div>
+</section>
+
+<!-- 2 FIVE QUESTIONS -->
+<section class="slide">
+  <div class="kicker">The job of a report</div>
+  <h2>Five questions. Anything else is decoration.</h2>
+  <div class="flow">
+    <div class="step"><div class="s">1 · Delivery</div><div class="v">Did it run? Where, when, how much?</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">2 · Audience &amp; supply</div><div class="v">Who and what did we actually buy?</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">3 · Response</div><div class="v">Clicks, viewability, recorded conversions</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">4 · Efficiency</div><div class="v">What did each outcome cost, vs. what?</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">5 · Decision</div><div class="v">What changes next flight?</div></div>
+  </div>
+  <p>A weak report dumps every tab of the export into slides. A strong one picks a base, reconciles it, disaggregates on purpose, and puts the caveats where the client can see them.</p>
+  <div class="box warn"><div class="t">The tell of a weak report</div>
+  <p>Averages of ratios (a "mean CTR" across unequal rows), percentages with no counts, totals summed across tabs that describe the same impressions eight times. All three mistakes are sitting inside this workbook, waiting. We will make none of them.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Recall the earlier Subaru exercise rules: weighted CTR from totals, floors before interpretation, blank-hour rollups out. Today generalizes those rules to a full reporting workflow.</p>
+  </div>
+</section>
+
+<!-- 3 WORKBOOK ANATOMY -->
+<section class="slide">
+  <div class="kicker">Export hygiene</div>
+  <h2>Eight tabs. One buy. Do not add them together.</h2>
+  <table>
+    <tr><th>Tab (one cut of the same delivery)</th><th>Rows</th><th>Impressions</th><th>Cost</th><th>Verdict</th></tr>
+    <tr><td>DOW · TOD · Device · Browser</td><td>5.6k–26k</td><td>≈1.47B</td><td>≈$4.63–4.64M</td><td style="text-align:left">Reconcile — usable bases</td></tr>
+    <tr><td>Supply vendor · Ad Format</td><td>0.9k–2.5k</td><td>≈1.19–1.20B</td><td>≈$3.44M</td><td style="text-align:left">Partial coverage (39–40 campaigns)</td></tr>
+    <tr><td>Site · Fold Position (raw)</td><td>2.9k–16.7k</td><td>4.2–4.6B (!)</td><td>$13–14.5M (!)</td><td style="text-align:left">Contaminated by "Total" rollup rows</td></tr>
+  </table>
+  <p>Each tab slices the <em>same</em> impressions by a different dimension. The Fold tab even includes a <span class="mono">Fold Position = "Total"</span> row-group worth 1.477B impressions by itself — sum the tab naively and you double-count the entire buy. The Site tab buries 722M impressions in a <span class="mono">[tail aggregate]</span> with zero clicks recorded.</p>
+  <div class="box"><div class="t">Our base for this deck</div>
+  <p>DOW tab, rollups removed: <strong>1,477,025,982 impressions · $4,644,764 · 1,124,693 clicks · 15,700,091 recorded GTC</strong> · 47 campaigns · Jan–Dec 2018. Every other tab is used only as a cut, never added to the base.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Reconciliation check: DOW/TOD/Device/Browser agree within ~0.3% (small diffs = dimension coverage/blank handling). Supply/Format tabs cover fewer campaigns — report their shares within-tab, not against the $4.64M base. This reconciliation paragraph belongs in every student report.</p>
+  </div>
+</section>
+
+<!-- 4 KPI LADDER -->
+<section class="slide">
+  <div class="kicker">Metric discipline</div>
+  <h2>The ladder, priced in real dollars</h2>
+  <div class="flow">
+    <div class="step"><div class="s">Delivery</div><div class="v">Impressions · Win Rate · Avg Bid</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">Quality</div><div class="v">In View % · 100% Video Completion</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">Action</div><div class="v">Clicks · CTR (weighted)</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">Recorded outcome</div><div class="v">GTC · GTC rate (imps)</div></div><div class="arr">→</div>
+    <div class="step"><div class="s">Efficiency</div><div class="v">CPM · CPC · Cost per GTC</div></div>
+  </div>
+  <div class="statgrid">
+    <div class="stat"><div class="n">$3.14</div><div class="l">CPM — $4.645M ÷ 1.477B impressions</div></div>
+    <div class="stat blue"><div class="n">0.076%</div><div class="l">weighted CTR — 1,124,693 ÷ 1,477,025,982</div></div>
+    <div class="stat blue"><div class="n">$4.13</div><div class="l">CPC — cost ÷ clicks</div></div>
+    <div class="stat amber"><div class="n">$0.30</div><div class="l">cost per recorded GTC — keep this number in mind for two slides</div></div>
+  </div>
+  <p>Every ratio in this deck is built the same way: <strong>sum the numerator, sum the denominator, then divide.</strong> The workbook's own CTR/CPM columns are row-level ratios — averaging them weights a 12-impression row the same as a 22-million-impression row. We never do that.</p>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Win Rate, Average Bid, In View %, and Video Completion exist as columns; use them as quality signals in cuts, impression-weighted if aggregated. Students already know Spend Share / Click Share / Efficiency Ratio from the exercise — reuse that language.</p>
+  </div>
+</section>
+
+<!-- 5 SCORECARD -->
+<section class="slide">
+  <div class="kicker">The scorecard</div>
+  <h2>Where the money went: top campaigns</h2>
+  <table>
+    <tr><th>Campaign (market · tactic)</th><th>Impressions</th><th>Cost</th><th>CTR</th><th>CPM</th><th>CPC</th><th>GTC</th></tr>
+    <tr class="hl"><td>ATL New Car</td><td>223.0M</td><td>$743,943</td><td>0.099%</td><td>$3.34</td><td>$3.36</td><td>1,987,193</td></tr>
+    <tr><td>DC New Car</td><td>138.5M</td><td>$366,637</td><td>0.068%</td><td>$2.65</td><td>$3.91</td><td>1,798,343</td></tr>
+    <tr><td>ORL New Car</td><td>137.1M</td><td>$363,099</td><td>0.089%</td><td>$2.65</td><td>$2.96</td><td>1,241,637</td></tr>
+    <tr><td>ATL Outback Conquesting 2018</td><td>120.6M</td><td>$357,001</td><td>0.032%</td><td>$2.96</td><td>$9.27</td><td>897,656</td></tr>
+    <tr><td>CHI Outback Conquesting 2018</td><td>96.6M</td><td>$342,304</td><td>0.061%</td><td>$3.54</td><td>$5.84</td><td>1,045,454</td></tr>
+    <tr><td>COL New Car</td><td>69.5M</td><td>$266,917</td><td>0.170%</td><td>$3.84</td><td>$2.26</td><td>1,199,669</td></tr>
+    <tr><td>PHL New Car</td><td>65.2M</td><td>$166,621</td><td>0.043%</td><td>$2.56</td><td>$5.95</td><td>1,704,498</td></tr>
+  </table>
+  <p>Read the last two rows against each other. <strong>COL New Car</strong> is the click-efficiency star (0.170% CTR, $2.26 CPC — best in the big-spend set). <strong>PHL New Car</strong> barely clicks (0.043%, $5.95) yet records 1.70M GTC, third-most in the account. The "winner" is a function of which rung of the ladder you report. A client report shows both and says so.</p>
+  <div class="box warn"><div class="t">Conquesting costs what conquesting costs</div>
+  <p>Outback/Impreza Conquesting lines run $5.25–$9.27 CPC vs. New Car lines at $2.26–$3.91. Stealing another brand's shoppers is priced like it. Judge conquesting on its own job — incremental shoppers — not on New Car's CPC.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Full 47-campaign table lives in the exhibits file (subaru_campaigns.json). ATL = Atlanta, COL = Columbus, etc. — dealer-market structure. Parts &amp; Service and Certified Pre-Owned are small, high-CPC service lines ($6–$9.53); don't blend them into vehicle-line averages.</p>
+  </div>
+</section>
+
+<!-- 6 GTC PROBLEM -->
+<section class="slide">
+  <div class="kicker">Name things honestly</div>
+  <h2>15.7 million "conversions." For cars. At $0.30 each.</h2>
+  <p class="bigq">"If GTC were car sales, Subaru would have sold fifteen million cars in these markets in 2018. It did not."</p>
+  <div class="cols" style="margin-top:20px">
+    <div>
+      <h3>What GTC can be</h3>
+      <ul>
+        <li>A recorded post-impression signal in the DSP export (the workbook's <span class="mono">Conversion Rate: GTC (Imps)</span> ≈ 1.06% of impressions).</li>
+        <li>14× the click count (15,700,091 vs. 1,124,693) — so most GTC arrives without a click on <em>that</em> impression: view-through windows, cross-device paths, or a very generous pixel.</li>
+        <li>Useful as a <em>relative</em> signal across cuts, with the definition attached.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What GTC is not</h3>
+      <ul>
+        <li>Not vehicle sales, not dealer visits, not proven lift. No holdout lives in this workbook.</li>
+        <li>Not comparable to clicks as a funnel step — you cannot "convert" 14 times per click.</li>
+      </ul>
+      <div class="box stop"><div class="t">The sentence to use</div>
+      <p>"The export records 15.7M GTC events ($0.30 each at base). We treat GTC as a directional recorded signal, not sales, and we never report it without that label." Instant deduction in your assignment for calling GTC "conversions" or "sales" with no qualifier.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>This mirrors GOAL.md's standing rule for this data: preserve reported rates, never describe recorded conversions as proven sales or causal lift. PHL New Car (huge GTC, few clicks) is the in-workbook proof that GTC ≠ click-path conversions.</p>
+  </div>
+</section>
+
+<!-- 7 PACING -->
+<section class="slide">
+  <div class="kicker">Pacing · full year</div>
+  <h2>Front-loaded year: February spent like it meant it</h2>
+  <svg class="chart" id="monthChart" viewBox="0 0 960 300" role="img" aria-label="Monthly Subaru spend and weighted CTR, 2018"></svg>
+  <p class="chartnote">Bars: monthly cost (base tab). Red line: weighted CTR by month. Feb–Mar is the spend peak ($646k / $632k); May troughs at $277k; December rebounds to $396k with the year's second-best click month (116,100 clicks).</p>
+  <div class="cols">
+    <div class="box"><div class="t">Report pacing like this</div><p>Spend share by month vs. outcome share by month. March records the most GTC (2.16M) on near-peak spend; October records the least (742k) on the lowest spend — flag both, explain neither beyond the evidence without flight briefs, incentives, or inventory data we don't have.</p></div>
+    <div class="box warn"><div class="t">CPM drift is the quiet story</div><p>CPM slides from $3.37 (Feb) to $2.85 (Nov) across the year. Same dollars bought ~18% more impressions in November than in February. Cheap reach or degrading supply? The format/supply cuts answer that — pacing alone cannot.</p></div>
+  </div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>No budget/flighting brief in workbook — teach restraint: describe shape, ask what external calendar (model-year launches, incentive months) would explain it, don't invent causality. CTR dips Jul–Aug (0.060–0.062%) then recovers.</p>
+  </div>
+</section>
+
+<!-- 8 DAYPART -->
+<section class="slide">
+  <div class="kicker">Daypart &amp; weekday</div>
+  <h2>Evenings click <em>and</em> record. Overnights only click.</h2>
+  <svg class="chart" id="hourChart" viewBox="0 0 960 300" role="img" aria-label="Subaru impressions and CTR by hour of day"></svg>
+  <p class="chartnote">Bars: impressions by user hour. Red line: weighted CTR. CTR peaks 19:00–23:00 (0.089–0.097%) where cost per GTC is also cheapest ($0.21–$0.27). Overnight CTR looks fine (0.083–0.089% at 01:00–04:00) — until cost per GTC triples ($0.57–$0.79).</p>
+  <p>Weekday is boring, and boring is information: Mon–Thu CTR 0.073–0.074%, weekend 0.080–0.081% with slightly fewer recorded GTC. No DOW story strong enough to re-flight around; the hour story is strong enough to test.</p>
+  <div class="box"><div class="t">The reporting move</div><p>Always pair the action metric with the outcome metric before recommending a daypart shift. "Overnight CTR is high" and "overnight is where cheap recorded outcomes live" are opposite claims in this data. You saw the click-vs-GTC tension in the exercise; at full-year scale it survives every floor we apply.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Blank-hour rollup rows excluded by construction (dimension group excludes nulls). Test design to propose: evening-weighted cell vs. control at equal CPM caps, judged on cost per GTC <em>and</em> a downstream check the client trusts — not GTC alone.</p>
+  </div>
+</section>
+
+<!-- 9 FORMAT -->
+<section class="slide">
+  <div class="kicker">Format economics</div>
+  <h2>The little banner out-clicks the big box. Video plays another sport.</h2>
+  <table>
+    <tr><th>Ad format</th><th>Impressions</th><th>Cost</th><th>CTR</th><th>CPM</th><th>Cost / GTC</th></tr>
+    <tr><td>300x250 (medium rectangle)</td><td>459.9M</td><td>$1,301,910</td><td>0.053%</td><td>$2.83</td><td>$0.27</td></tr>
+    <tr class="hl"><td>320x50 (mobile banner)</td><td>441.2M</td><td>$1,117,195</td><td>0.103%</td><td>$2.53</td><td>$0.30</td></tr>
+    <tr><td>728x90 (leaderboard)</td><td>242.4M</td><td>$700,913</td><td>0.067%</td><td>$2.89</td><td>$0.28</td></tr>
+    <tr><td>160x600 (skyscraper)</td><td>44.2M</td><td>$133,982</td><td>0.025%</td><td>$3.03</td><td>$0.24</td></tr>
+    <tr><td>640x360 (video)</td><td>16.9M</td><td>$182,770</td><td>0.296%</td><td>$10.81</td><td>$0.79</td></tr>
+    <tr><td>9545x9545 (??)</td><td>1,278</td><td>$6.18</td><td>0.000%</td><td>$4.84</td><td>$0.52</td></tr>
+  </table>
+  <p><strong>320x50</strong> absorbs less money than 300x250 and returns nearly double the clicks (453,971 vs. 245,044) — the exact efficiency pattern you found in the exercise, now confirmed on the fuller workbook. Video (640x360) costs 4× the CPM and clicks at 0.296%, but its recorded outcomes cost $0.79 — judge it with completion/viewability, not CPC. And yes, someone trafficked a <span class="mono">9545x9545</span>. Report data garbage when you find it; don't average it in.</p>
+  <p class="small">Format tab covers ~$3.44M of the buy (39 campaigns) — shares and rates are within-tab. Missing here: the actual creative files. This export knows sizes, not artwork — a reporting limit to name, not hide.</p>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>480x360 video: 148k imps, 0.785% CTR, $10.15 CPM — small, video-priced. Recommendation discipline: shift-test budget from 160x600/300x250 toward 320x50 class only with a GTC + downstream validation, since 160x600 paradoxically shows cheapest cost/GTC ($0.24) on tiny click volume.</p>
+  </div>
+</section>
+
+<!-- 10 DEVICE + BROWSER -->
+<section class="slide">
+  <div class="kicker">Devices tell two different truths</div>
+  <h2>Phones click. PCs "convert." Believe both carefully.</h2>
+  <table>
+    <tr><th>Device</th><th>Impressions</th><th>Cost</th><th>Clicks</th><th>CTR</th><th>CPM</th><th>GTC</th><th>$/GTC</th></tr>
+    <tr class="hl"><td>Mobile</td><td>795.8M</td><td>$2,210,162</td><td>768,370</td><td>0.097%</td><td>$2.78</td><td>7,297,877</td><td>$0.30</td></tr>
+    <tr><td>PC</td><td>481.0M</td><td>$1,902,700</td><td>119,584</td><td>0.025%</td><td>$3.96</td><td>7,135,335</td><td>$0.27</td></tr>
+    <tr><td>Tablet</td><td>194.9M</td><td>$510,888</td><td>233,924</td><td>0.120%</td><td>$2.62</td><td>1,213,579</td><td>$0.42</td></tr>
+    <tr><td>Connected TV</td><td>0.87M</td><td>$6,117</td><td>259</td><td>0.030%</td><td>$7.06</td><td>1,096</td><td>$5.58</td></tr>
+  </table>
+  <p>PC produces <strong>6.4× fewer clicks than mobile on similar spend</strong> — and essentially the <em>same</em> recorded GTC (7.14M vs. 7.30M). Either desktop shoppers research and the pixel credits view-throughs, or GTC attribution is doing heavy lifting. Tablet is the CTR trap: highest CTR (0.120%), worst cost per GTC ($0.42) of the big three. Browsers rhyme: Chrome carries the GTC (10.96M at $3.69 CPM), Safari is cheaper ($2.32, 0.088% CTR), WebView clicks like crazy (0.148% — in-app taps, handle with suspicion), Edge/IE record GTC with almost no clicks at all.</p>
+  <div class="box warn"><div class="t">Never report one column of this table</div><p>Device strategy from CTR alone kills PC. Device strategy from GTC alone kills tablet. The honest report keeps both columns, names the attribution window problem, and asks for a downstream truth (dealer-site sessions, leads) before reallocating.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Device tab reconciles to base (1.473B). CTV in 2018 export is a rounding error (0.06% of impressions) — nice contrast with Peter's 2026 connected-partnerships world; ask what changed.</p>
+  </div>
+</section>
+
+<!-- 11 SUPPLY / SITES / FOLD -->
+<section class="slide">
+  <div class="kicker">Supply: what did we actually buy?</div>
+  <h2>Three exchanges, one giant "Unknown," and sites with no names</h2>
+  <div class="cols">
+    <div>
+      <h3>Supply vendors (within-tab)</h3>
+      <ul>
+        <li><strong>google</strong> 451.5M imps · $2.50 CPM · 0.084% CTR · $0.21/GTC</li>
+        <li><strong>casale</strong> 372.7M · $3.11 · 0.049% · $0.33</li>
+        <li><strong>openx</strong> 260.4M · $2.96 · 0.075% · $0.41</li>
+        <li>Video-priced tail: adaptv $9.61 CPM, brightroll $14.57 — different inventory, don't CPM-shame it against banners.</li>
+        <li>Suspiciously cheap outcomes (adconductor $0.05/GTC, gumgum $0.08) get a quality audit, not a budget raise, until explained.</li>
+      </ul>
+      <h3>Fold position</h3>
+      <ul>
+        <li>Above: 608.6M · 0.100% CTR · $0.32/GTC</li>
+        <li>Below: 319.4M · 0.034% · $0.22/GTC (cheap recorded outcomes again — verify before celebrating)</li>
+        <li><strong>Unknown: 548.8M (37%) at the highest CPM, $3.47</strong> — over a third of the buy can't say where on the page it ran</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Sites: brands you know, IDs you don't</h3>
+      <ul>
+        <li>Named reach: foxnews.com 104.9M, people.com 51.2M, cnn.com 42.5M, cargurus.com 38.4M.</li>
+        <li><strong>cargurus.com</strong>: 0.017% CTR, $0.10/GTC — car shoppers don't click banners; the recorded signal arrives anyway. Context beats clicks.</li>
+        <li><strong>zillow.com</strong>: 10.8M imps, 296 clicks (0.003%). Is that a media problem or a measurement problem? Report asks, doesn't assume.</li>
+        <li>Numeric "sites" (<span class="mono">1207472156</span>: 9.4M imps, 0.525% CTR) are unnamed app inventory — transparency line item, blocklist conversation with the desk.</li>
+        <li>722M impressions sit in <span class="mono">[tail aggregate]</span> with zero clicks/GTC recorded — half the site tab is unreportable as shipped. Say that in the report.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Site/Fold tabs require rollup removal before any cut (their "Total" groups ≈ the whole base). Vendor tab is partial coverage ($3.44M). This slide is the bridge to Peter's supply-path answers — students just heard a partnerships lead describe this exact terrain.</p>
+  </div>
+</section>
+
+<!-- 12 FLOORS -->
+<section class="slide">
+  <div class="kicker">Floors &amp; ghosts</div>
+  <h2>The workbook contains a 3,500% CTR. Your report must not.</h2>
+  <table>
+    <tr><th>Legacy ghost campaign</th><th>Impressions</th><th>Clicks</th><th>"CTR"</th><th>GTC</th></tr>
+    <tr><td>ORL Crosstrek Conquesting 2017</td><td>2</td><td>70</td><td>3,500%</td><td>38,248</td></tr>
+    <tr><td>COL Crosstrek Conquesting 2017</td><td>6</td><td>139</td><td>2,317%</td><td>11,958</td></tr>
+    <tr><td>CHI Forester Conquesting 2017</td><td>22</td><td>186</td><td>845%</td><td>87,367</td></tr>
+    <tr><td>MSP Q4 Conquesting 2017</td><td>29</td><td>174</td><td>600%</td><td>66,316</td></tr>
+    <tr><td>COL Audio</td><td>0</td><td>0</td><td>—</td><td>54</td></tr>
+  </table>
+  <p>These are 2017 campaigns still carrying attributed clicks/GTC into a 2018 export — attribution carryover wearing a campaign name. Sorted naively by CTR, ghosts win every leaderboard. This is why reporting starts with <strong>floors</strong>: our campaign reads use meaningful-delivery lines only, and every rate in your assignment needs its denominators printed next to it.</p>
+  <div class="box"><div class="t">Floor rules for your report</div><p>State your floor (e.g., ≥1M impressions or ≥$10k per line), apply it before ranking anything, and keep a one-line "excluded as immaterial" note. A floor you declare is method. A floor you hide is cherry-picking.</p></div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Ghost GTC totals (~256k across these rows) also contaminate base GTC slightly — another reason the headline reports GTC with its label. Exercise used a 100-impression floor; full-report floors should be far stricter at this scale.</p>
+  </div>
+</section>
+
+<!-- 13 ATTRIBUTION / CAUSALITY -->
+<section class="slide">
+  <div class="kicker">The counterfactual, DSP edition</div>
+  <h2>What would Subaru have sold with zero ads?</h2>
+  <div class="cols">
+    <div>
+      <h3>Why this export can't answer that</h3>
+      <ul>
+        <li>No holdout, no geo split, no exposed/unexposed contrast — everyone in the file saw ads.</li>
+        <li>Conquesting targets rival shoppers <em>because</em> they're in-market; retargeting-style lines harvest demand that was already coming.</li>
+        <li>GTC's window and rules aren't documented in the workbook. A metric with no stated window gets reported with a question mark, not a victory lap.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What you'd ask the desk for</h3>
+      <ul>
+        <li>TTD conversion settings: window, view-through share, dedup vs. search/social claims on the same shopper.</li>
+        <li>A lift design for next flight: geo holdouts on matched dealer markets, or audience-split cells at equal bids.</li>
+        <li>Downstream truth: dealer-site sessions/leads by market-week to sanity-check GTC geography (does PHL really behave like that?).</li>
+      </ul>
+      <div class="box stop"><div class="t">Our verdict, honestly</div><p>This workbook proves delivery, response, and relative efficiency at massive scale. It does not prove the ads caused a single additional car sale. Report the first; never smuggle in the second.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Same standard as the Meta/reporting research: windows are choices with billing attached; platform sums double-count. Peter's attribution answer from the guest chat is the practitioner version of this slide — reference it.</p>
+  </div>
+</section>
+
+<!-- 14 HONEST REPORT -->
+<section class="slide">
+  <div class="kicker">The deliverable</div>
+  <h2>Anatomy of a report I'd sign</h2>
+  <div class="cols">
+    <div>
+      <div class="card"><div class="hd"><span>HEADLINE (one sentence, denominators attached)</span></div>
+      <div class="bdy">"In 2018, Subaru spent $4.64M for 1.48B Trade Desk impressions across 47 market campaigns (CPM $3.14), earning 1.12M clicks (weighted CTR 0.076%, CPC $4.13) and 15.7M recorded GTC events — a directional signal, not sales."</div></div>
+      <div class="card"><div class="hd"><span>RECONCILIATION</span><span>SCORECARD</span><span>CUTS</span></div>
+      <div class="bdy">Base tab named, rollups removed, tab disagreements disclosed. Campaign scorecard by market/tactic. Two or three purposeful cuts (pacing, daypart, format, device, supply) — each with click <em>and</em> outcome columns.</div></div>
+      <div class="card"><div class="hd"><span>CAVEATS ON THE PAGE</span></div>
+      <div class="bdy">GTC labeled, window unknown. Floors declared, ghosts excluded by name. Partial-coverage tabs flagged. No causal verbs without a design.</div></div>
+      <div class="card"><div class="hd"><span>DECISION + TEST</span></div>
+      <div class="bdy">"Shift-test 15% of 300x250/160x600 budget into evening-weighted 320x50-class delivery in two matched markets; judge on CPC, cost per GTC, and dealer-site sessions — then decide." A report that changes nothing was a diary.</div></div>
+    </div>
+    <div>
+      <h3>Guardrails, laminated</h3>
+      <ul>
+        <li>One base. Never sum tabs. Reconcile before you report.</li>
+        <li>Weighted ratios only: sum, then divide. Print denominators.</li>
+        <li>Declare floors; name excluded ghosts and garbage rows.</li>
+        <li>Click winner ≠ outcome winner — show both, every cut.</li>
+        <li>Cheap outcomes get audited before they get budget.</li>
+        <li>Unknown is a finding (37% fold-unknown; 722M tail impressions), not a rounding error.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>This template is the assignment rubric in prose. The headline-sentence drill works live in pairs (5 minutes): one sentence, must contain spend, impressions, CTR with counts, and the GTC label.</p>
+  </div>
+</section>
+
+<!-- 15 ASSIGNMENT -->
+<section class="slide">
+  <div class="kicker">Your turn · 5 points</div>
+  <h2>Write the full-year Subaru report</h2>
+  <p class="lead">One page plus one exhibit page. You're the analyst; the dealer-group CMO has read too many dashboards.</p>
+  <div class="cols">
+    <div>
+      <h3>Your report must have</h3>
+      <ul>
+        <li>Headline + reconciliation paragraph (base, rollups, floors — by the numbers).</li>
+        <li>Campaign scorecard read: concentration, conquesting economics, one winner-flips example.</li>
+        <li>Two cuts the earlier Excel exercise did <em>not</em> do for you — choose from Device, Browser, Supply Vendor, Site, Fold Position, or campaign-by-month pacing.</li>
+        <li>GTC handled honestly, one decision, and the test that would prove it.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Instant deductions</h3>
+      <ul>
+        <li>Summing tabs, averaging the CTR column, or ranking ghost campaigns.</li>
+        <li>GTC called "sales"/"conversions" with no qualifier; causal verbs on observational cuts.</li>
+        <li>Re-submitting the old exercise pivots as your cuts.</li>
+        <li>Any % with no counts; any recommendation with no test.</li>
+      </ul>
+      <div class="box"><div class="t">Before you leave</div><p>Discussion: the desk can truthfully report "$0.30 per conversion on 15.7M conversions." You now know what that sentence hides. What do you owe the client in the same breath — and what happens to the agency that says it?</p></div>
+    </div>
+  </div>
+  <p class="small">Full brief + exhibits: Canvas → Campaign Reporting: Subaru on The Trade Desk (5 pts). Deck stays live at chrisjvargo.com/campaign-reporting/. Press N for speaker notes — they contain half the lecture. Next: Traditional 1, out-of-home.</p>
+  <div class="notes"><div class="t">Speaker notes</div>
+    <p>Close by connecting forward: Traditional/OOH next class has the same questions with even softer impression definitions (Geopath). Students should reuse this template for their capstone media-plan KPI sections in the final workshops.</p>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="hud">
+  <span>Campaign Reporting · APRD 3002 · <span id="counter">1 / 15</span></span>
+  <span>
+    <button id="prevBtn" type="button">← Prev</button>
+    <button id="nextBtn" type="button">Next →</button>
+    <button id="notesBtn" type="button">Notes (N)</button>
+    <button id="fsBtn" type="button">Fullscreen (F)</button>
+  </span>
+</div>
+
+<script>
+const MONTHS=[["Jan",331561,0.090],["Feb",645832,0.086],["Mar",632354,0.070],["Apr",429569,0.074],["May",277024,0.089],["Jun",369981,0.076],["Jul",363124,0.062],["Aug",339157,0.060],["Sep",308995,0.072],["Oct",260288,0.073],["Nov",290752,0.073],["Dec",396128,0.087]];
+const HOURS=[[0,41014998,0.083],[1,35331930,0.084],[2,31055570,0.089],[3,29174676,0.085],[4,31686386,0.083],[5,40281965,0.078],[6,51234364,0.073],[7,59335877,0.067],[8,64648599,0.063],[9,67385669,0.062],[10,65941219,0.061],[11,66073785,0.060],[12,66992663,0.062],[13,66429545,0.065],[14,66845490,0.067],[15,68757005,0.069],[16,69806062,0.071],[17,69455668,0.074],[18,77625527,0.076],[19,86764374,0.089],[20,83211164,0.089],[21,78679716,0.091],[22,71403147,0.097],[23,53955877,0.093]];
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+function bars(svg, data, opt){
+  const W=960,H=opt.h||300,padL=52,padB=30,padT=16,padR=16;
+  const iw=W-padL-padR, ih=H-padB-padT, n=data.length, bw=iw/n;
+  const max=Math.max(...data.map(d=>d[1]))*1.12;
+  let s="";
+  for(let g=0;g<=4;g++){const y=padT+ih-(ih*g/4);const v=max*g/4;
+    const lab=opt.money?("$"+Math.round(v/1000)+"k"):Math.round(v/1000000)+"M";
+    s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#e3e3e3"/><text x="${padL-6}" y="${y+4}" font-size="11" fill="#5a5a5a" text-anchor="end" font-family="ui-monospace,Menlo,monospace">${lab}</text>`;}
+  data.forEach((d,i)=>{
+    const bh=ih*d[1]/max, x=padL+i*bw+bw*0.14, y=padT+ih-bh;
+    s+=`<rect x="${x}" y="${y}" width="${bw*0.72}" height="${bh}" fill="${opt.color||"#1246a0"}"><title>${esc(String(d[0]))}: ${d[1].toLocaleString()}</title></rect>`;
+    if(opt.labelEvery && i%opt.labelEvery===0) s+=`<text x="${x+bw*0.36}" y="${H-10}" font-size="10.5" fill="#5a5a5a" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">${esc(String(d[0]))}</text>`;
+  });
+  if(opt.line){
+    const lmax=Math.max(...data.map(d=>d[2]))*1.3||1, lmin=0; let pts="";
+    data.forEach((d,i)=>{const x=padL+i*bw+bw*0.5, y=padT+ih-(ih*(d[2]-lmin)/lmax); pts+=`${x},${y} `;});
+    s+=`<polyline points="${pts}" fill="none" stroke="#b3271e" stroke-width="2.5"/>`;
+    data.forEach((d,i)=>{const x=padL+i*bw+bw*0.5, y=padT+ih-(ih*d[2]/lmax);
+      s+=`<circle cx="${x}" cy="${y}" r="3.2" fill="#b3271e"><title>CTR ${d[2]}%</title></circle>`;});
+  }
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.innerHTML=s;
+}
+bars(document.getElementById("monthChart"), MONTHS, {h:300,labelEvery:1,line:true,money:true,color:"#1246a0"});
+bars(document.getElementById("hourChart"), HOURS, {h:300,labelEvery:2,line:true,color:"#9db8dd"});
+
+const slides=[...document.querySelectorAll(".slide")]; let cur=0;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,j)=>s.classList.toggle("active", j===cur));
+  document.getElementById("counter").textContent=(cur+1)+" / "+slides.length;
+  document.getElementById("bar").style.width=((cur+1)/slides.length*100)+"%";
+  slides[cur].scrollTop=0;
+  history.replaceState(null,"","#"+(cur+1));
+}
+document.getElementById("prevBtn").onclick=()=>show(cur-1);
+document.getElementById("nextBtn").onclick=()=>show(cur+1);
+document.getElementById("notesBtn").onclick=()=>document.body.classList.toggle("shownotes");
+document.getElementById("fsBtn").onclick=()=>{
+  if(document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+};
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();show(cur+1);}
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();show(cur-1);}
+  else if(e.key==="n"||e.key==="N") document.body.classList.toggle("shownotes");
+  else if(e.key==="f"||e.key==="F") document.getElementById("fsBtn").click();
+  else if(e.key==="Home") show(0); else if(e.key==="End") show(slides.length-1);
+});
+let tx=null;
+document.addEventListener("touchstart",e=>{tx=e.touches[0].clientX;},{passive:true});
+document.addEventListener("touchend",e=>{
+  if(tx===null) return; const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>60) show(cur+(dx<0?1:-1)); tx=null;
+},{passive:true});
+show(Math.min(slides.length-1, Math.max(0, (parseInt(location.hash.slice(1))||1)-1)));
+</script>
+</body>
+</html>
+
+
+
